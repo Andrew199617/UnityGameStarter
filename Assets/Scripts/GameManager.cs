@@ -81,9 +81,10 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void RetryGame()
     {
+        Game.SetActive(true);
         GameOverScreen.SetActive(false);
-        Time.timeScale = 1;
         ResetGameValues();
+        Time.timeScale = 1;
     }
 
     /// <summary>

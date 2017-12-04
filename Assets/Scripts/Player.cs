@@ -70,6 +70,11 @@ public class Player : MonoBehaviour
     private GameObject trailGameObject;
 
     /// <summary>
+    /// The GameObject of the Trail behind the Player.
+    /// </summary>
+    private GameObject lastTrailGameObject;
+
+    /// <summary>
     /// The RectTransform of the Trail behind the Player.
     /// </summary>
     private RectTransform trailTransform;
@@ -82,7 +87,8 @@ public class Player : MonoBehaviour
     /// <summary>
     /// width of the trail.
     /// </summary>
-    private const int Width = 9;
+    private const int Width = 7;
+
     #endregion
 
     #region PublicMethods
@@ -93,19 +99,14 @@ public class Player : MonoBehaviour
     public void Start()
     {
         Time.timeScale = 1;
-        if (PossesingPlayer == 1)
-        {
-            movementDirection = new Vector3(0, Speed, 0);
-            transform.rotation = Quaternion.Euler(0, 0, (int)Direction.Up);
-        }
-        else
-        {
-            movementDirection = new Vector3(0, -Speed, 0);
-            transform.rotation = Quaternion.Euler(0, 0, (int)Direction.Down);
-        }
+
+        movementDirection = new Vector3(0, PossesingPlayer == 1 ? Speed : -Speed, 0);
+        transform.rotation = Quaternion.Euler(0, 0, PossesingPlayer == 1 ? (int)Direction.Up : (int)Direction.Down);
+        
         var rectTransform = GetComponent<RectTransform>();
         startingOffsetMin = rectTransform.offsetMin;
         startingOffsetMax = rectTransform.offsetMax;
+
         CreateTrail(Quaternion.Euler(0, 0, 0));
     }
 
@@ -116,20 +117,20 @@ public class Player : MonoBehaviour
 
         if (deltaTime > timeBeforeCanMove)
         {
-            var move = PossesingPlayer == 1
+            var moveInput = PossesingPlayer == 1
                 ? new Vector3(Input.GetAxis("Horizontal1"), Input.GetAxis("Vertical1"), 0)
                 : new Vector3(Input.GetAxis("Horizontal2"), Input.GetAxis("Vertical2"), 0);
 
-            if ((move.y > 0 || move.y < 0) && (movementDirection.x > 0 || movementDirection.x < 0))
+            if ((moveInput.y > 0 || moveInput.y < 0) && (movementDirection.x > 0 || movementDirection.x < 0))
             {
                 CreateTrail(Quaternion.Euler(0, 0, 90));
             }
-            else if ((move.x > 0 || move.x < 0) && (movementDirection.y > 0 || movementDirection.y < 0))
+            else if ((moveInput.x > 0 || moveInput.x < 0) && (movementDirection.y > 0 || movementDirection.y < 0))
             {
                 CreateTrail(Quaternion.Euler(0, 0, 0));
             }
 
-            SetMovementDirection();
+            SetMovementDirection(moveInput);
         }
 
         IncreaseSpeed(Time.deltaTime);
@@ -139,17 +140,16 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Allows the player to collide with his own trails again.
     /// </summary>
-    /// <param name="trailCollider"></param>
-    /// <param name="sizeDelta"></param>
-    /// <returns></returns>
-    private IEnumerator SetColliderSize(BoxCollider2D trailCollider, Vector2 sizeDelta)
+    /// <returns>Couroutine</returns>
+    private IEnumerator SetTagAndLayer()
     {
-        yield return new WaitForSeconds(timeBeforeCanMove * 3);
-        if (trailCollider)
+        yield return new WaitForSeconds(timeBeforeCanMove - .1f);
+        if (lastTrailGameObject != null)
         {
-            trailCollider.size = sizeDelta;
+            lastTrailGameObject.tag = "Untagged";
+            lastTrailGameObject.layer = 8;
         }
     }
 
@@ -165,14 +165,16 @@ public class Player : MonoBehaviour
             trailTransform.SetParent(GameObject.Find("Trails").transform);
         }
         //Only place the collider for the last trail after a grace period
-        if (trailBoxCollider)
+        if (trailGameObject)
         {
-            StartCoroutine(SetColliderSize(trailBoxCollider, trailTransform.sizeDelta));
+            lastTrailGameObject = trailGameObject;
+            StartCoroutine(SetTagAndLayer());
         }
 
         trailGameObject = new GameObject("Trail");
         trailGameObject.SetActive(true);
         trailGameObject.tag = PossesingPlayer == 1 ? "PlayerOne" : "PlayerTwo";
+        trailGameObject.layer = PossesingPlayer == 1 ? 9 : 10;
 
         trailTransform = trailGameObject.AddComponent<RectTransform>();
 
@@ -188,6 +190,10 @@ public class Player : MonoBehaviour
 
         trailBoxCollider = trailGameObject.AddComponent<BoxCollider2D>();
         trailBoxCollider.size = new Vector2(Width, height);
+
+        var rigidbody2D = trailGameObject.AddComponent<Rigidbody2D>();
+        rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
+        rigidbody2D.useFullKinematicContacts = true;
 
         trailTransform.rotation = rotation;
     }
@@ -209,7 +215,10 @@ public class Player : MonoBehaviour
     /// <param name="other">other object you collided with.</param>
     public void OnCollisionEnter2D(Collision2D other)
     {
-        GameOver();
+        if (!other.gameObject.CompareTag(PossesingPlayer == 1 ? "PlayerOne" : "PlayerTwo"))
+        {
+            GameManager.GameManagerInst.GameEnded();
+        }
     }
 
     #endregion
@@ -258,53 +267,43 @@ public class Player : MonoBehaviour
 
         trailTransform.anchoredPosition = new Vector2(0,rect.y);
         trailTransform.sizeDelta = new Vector2(Width, rect.height);
+        trailBoxCollider.size = trailTransform.sizeDelta;
     }
 
     /// <summary>
     /// Handles Turn left, right, top, bot 
     /// </summary>
-    private void SetMovementDirection()
+    /// <param name="moveInput">The movement in the horizontal and vertical direction</param>
+    private void SetMovementDirection(Vector3 moveInput)
     {
-        var move = PossesingPlayer == 1
-            ? new Vector3(Input.GetAxis("Horizontal1"), Input.GetAxis("Vertical1"), 0)
-            : new Vector3(Input.GetAxis("Horizontal2"), Input.GetAxis("Vertical2"), 0);
-
-        if (move.x > 0 || move.x < 0)
+        if (moveInput.x > 0 || moveInput.x < 0)
         {
             //Can't move backwards
-            if (movementDirection.x < 0 && move.x > 0 || movementDirection.x > 0 && move.x < 0)
+            if (movementDirection.x < 0 && moveInput.x > 0 || movementDirection.x > 0 && moveInput.x < 0)
             {
                 return;
             }
             var rectTransform = GetComponent<RectTransform>();
-            bool goingLeft = move.x < 0;
+            bool goingLeft = moveInput.x < 0;
             rectTransform.rotation = Quaternion.Euler(0, 0, goingLeft ? (int)Direction.Left : (int)Direction.Right);
 
             movementDirection = new Vector3(goingLeft ? -Speed : Speed, 0, 0);
             deltaTime = 0;
         }
-        else if (move.y > 0 || move.y < 0)
+        else if (moveInput.y > 0 || moveInput.y < 0)
         {
             //Can't move backwards
-            if (movementDirection.y < 0 && move.y > 0 || movementDirection.y > 0 && move.y < 0)
+            if (movementDirection.y < 0 && moveInput.y > 0 || movementDirection.y > 0 && moveInput.y < 0)
             {
                 return;
             }
             var rectTransform = GetComponent<RectTransform>();
-            bool goingUp = move.y > 0;
+            bool goingUp = moveInput.y > 0;
             rectTransform.rotation = Quaternion.Euler(0, 0, goingUp ? (int)Direction.Up : (int)Direction.Down);
 
             movementDirection = new Vector3(0, goingUp ? Speed : -Speed, 0);
             deltaTime = 0;
         }
-    }
-
-    /// <summary>
-    /// Calls the GameManager GameEnded().
-    /// </summary>
-    private void GameOver()
-    {
-        GameManager.GameManagerInst.GameEnded();
     }
 
     #endregion
