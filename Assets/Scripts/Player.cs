@@ -83,6 +83,7 @@ public class Player : MonoBehaviour
     /// width of the trail.
     /// </summary>
     private const int Width = 9;
+
     #endregion
 
     #region PublicMethods
@@ -209,7 +210,7 @@ public class Player : MonoBehaviour
     /// <param name="other">other object you collided with.</param>
     public void OnCollisionEnter2D(Collision2D other)
     {
-        GameOver();
+        OnDied();
     }
 
     #endregion
@@ -302,9 +303,9 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Calls the GameManager GameEnded().
     /// </summary>
-    private void GameOver()
+    private void OnDied()
     {
-        GameManager.GameManagerInst.GameEnded();
+        GameManager.GameManagerInst.PlayerDied(PossesingPlayer - 1);
     }
 
     #endregion
