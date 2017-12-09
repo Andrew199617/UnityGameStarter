@@ -119,4 +119,21 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1;
     }
 
+    public void Draw()
+    {
+        GameOverScreen.SetActive(true);
+        //Change text to say what player won
+        var textComponent = GameOverText.GetComponent<Text>();
+        textComponent.text = "Draw";
+
+        //Change all colors in game over screen to be winning players colors.
+        textComponent.color = Color.green;
+        var childImages = GameOverText.transform.parent.GetComponentsInChildren<Image>();
+        foreach (var childImage in childImages)
+        {
+            childImage.color = Color.green;
+        }
+
+        Time.timeScale = 0;
+    }
 }

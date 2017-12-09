@@ -194,7 +194,14 @@ public class Player : MonoBehaviour
     /// <param name="other">other object you collided with.</param>
     public void OnCollisionEnter2D(Collision2D other)
     {
-        OnDied();
+        if (other.transform.CompareTag("Player"))
+        {
+            GameManager.GameManagerInst.Draw();
+        }
+        else
+        {
+            OnDied();
+        }
     }
 
     #endregion

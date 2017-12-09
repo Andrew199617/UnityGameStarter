@@ -220,6 +220,16 @@ Prefab:
       propertyPath: GameOverScreen
       value: 
       objectReference: {fileID: 1616612052}
+    - target: {fileID: 114155392567938124, guid: 1e50c08eb32b31e48ad9fb354c948ece,
+        type: 2}
+      propertyPath: GameOverText
+      value: 
+      objectReference: {fileID: 1570484198}
+    - target: {fileID: 114155392567938124, guid: 1e50c08eb32b31e48ad9fb354c948ece,
+        type: 2}
+      propertyPath: Game
+      value: 
+      objectReference: {fileID: 1603212209}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e50c08eb32b31e48ad9fb354c948ece, type: 2}
   m_IsPrefabParent: 0
@@ -503,12 +513,12 @@ Prefab:
     - target: {fileID: 114895454577214834, guid: a4499e5fef9ada648a60f68931885aa6,
         type: 2}
       propertyPath: timeBeforeCanMove
-      value: 0.5
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 114095914692236618, guid: a4499e5fef9ada648a60f68931885aa6,
         type: 2}
       propertyPath: timeBeforeCanMove
-      value: 0.5
+      value: 0.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a4499e5fef9ada648a60f68931885aa6, type: 2}
@@ -516,6 +526,16 @@ Prefab:
 --- !u!224 &1457735911 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224079301001355106, guid: a4499e5fef9ada648a60f68931885aa6,
+    type: 2}
+  m_PrefabInternal: {fileID: 1457735910}
+--- !u!1 &1570484198 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1013200447345670, guid: 100870794badc5545b2965c80a23dd21,
+    type: 2}
+  m_PrefabInternal: {fileID: 1867935832}
+--- !u!1 &1603212209 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1311088102991318, guid: a4499e5fef9ada648a60f68931885aa6,
     type: 2}
   m_PrefabInternal: {fileID: 1457735910}
 --- !u!1 &1616612052 stripped
