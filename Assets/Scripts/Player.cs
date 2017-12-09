@@ -55,16 +55,6 @@ public class Player : MonoBehaviour
     private float deltaTime;
 
     /// <summary>
-    /// used to reset postion when restarting the game.
-    /// </summary>
-    private Vector2 startingOffsetMin;
-
-    /// <summary>
-    /// used to reset postion when restarting the game.
-    /// </summary>
-    private Vector2 startingOffsetMax;
-
-    /// <summary>
     /// The GameObject of the Trail behind the Player.
     /// </summary>
     private GameObject trailGameObject;
@@ -104,9 +94,6 @@ public class Player : MonoBehaviour
             movementDirection = new Vector3(0, -Speed, 0);
             transform.rotation = Quaternion.Euler(0, 0, (int)Direction.Down);
         }
-        var rectTransform = GetComponent<RectTransform>();
-        startingOffsetMin = rectTransform.offsetMin;
-        startingOffsetMax = rectTransform.offsetMax;
         CreateTrail(Quaternion.Euler(0, 0, 0));
     }
 
@@ -190,6 +177,10 @@ public class Player : MonoBehaviour
         trailBoxCollider = trailGameObject.AddComponent<BoxCollider2D>();
         trailBoxCollider.size = new Vector2(Width, height);
 
+        var rigidbody2DComponent = trailGameObject.AddComponent<Rigidbody2D>();
+        rigidbody2DComponent.bodyType = RigidbodyType2D.Kinematic;
+        rigidbody2DComponent.useFullKinematicContacts = true;
+
         trailTransform.rotation = rotation;
     }
 
@@ -218,25 +209,6 @@ public class Player : MonoBehaviour
     #region PrivateMethods
 
     /// <summary>
-    /// Return player to starting locationa and reset stats if applicable
-    /// </summary>
-    public void Reset()
-    {
-        var rectTransform = GetComponent<RectTransform>();
-        rectTransform.offsetMin = startingOffsetMin;
-        rectTransform.offsetMax = startingOffsetMax;
-        rectTransform.rotation = Quaternion.Euler(0, 0, PossesingPlayer == 1 ? (int)Direction.Up : (int)Direction.Down);
-        movementDirection = new Vector3(0, PossesingPlayer == 1 ? Speed : -Speed, 0);
-        CreateTrail(Quaternion.Euler(0, 0, 0));
-
-        var trails = GameObject.Find("Trails").transform;
-        for(var i = 0; i < trails.childCount; ++i)
-        {
-            Destroy(trails.GetChild(i).gameObject);
-        }
-    }
-
-    /// <summary>
     /// Ajusts the height and y position of the trail to the speed the bike is going.
     /// </summary>
     private void SetTrail()
@@ -259,6 +231,7 @@ public class Player : MonoBehaviour
 
         trailTransform.anchoredPosition = new Vector2(0,rect.y);
         trailTransform.sizeDelta = new Vector2(Width, rect.height);
+        //trailBoxCollider.size = trailTransform.sizeDelta;
     }
 
     /// <summary>

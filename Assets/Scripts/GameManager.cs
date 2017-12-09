@@ -115,7 +115,6 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void ShowStartScreen()
     {
-        ResetGameValues();
         startScreen.SetActive(true);
         GameOverScreen.SetActive(false);
         Game.SetActive(false);
@@ -130,15 +129,6 @@ public class GameManager : MonoBehaviour {
     {
         GameOverScreen.SetActive(false);
         Time.timeScale = 1;
-        ResetGameValues();
     }
 
-    /// <summary>
-    /// Resets Player and anything else needed to replay game.
-    /// </summary>
-    private static void ResetGameValues()
-    {
-        var players = GameObject.FindGameObjectsWithTag("Player");
-        players.ToList().ForEach(p => p.GetComponent<Player>().Reset());
-    }
 }
