@@ -215,6 +215,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114155392567938124, guid: 1e50c08eb32b31e48ad9fb354c948ece,
+        type: 2}
+      propertyPath: GameOverScreen
+      value: 
+      objectReference: {fileID: 1616612052}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e50c08eb32b31e48ad9fb354c948ece, type: 2}
   m_IsPrefabParent: 0
@@ -479,6 +484,32 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1191180518355470, guid: a4499e5fef9ada648a60f68931885aa6, type: 2}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1732023695097792, guid: a4499e5fef9ada648a60f68931885aa6, type: 2}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160608875142598, guid: a4499e5fef9ada648a60f68931885aa6, type: 2}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1652573082156360, guid: a4499e5fef9ada648a60f68931885aa6, type: 2}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114895454577214834, guid: a4499e5fef9ada648a60f68931885aa6,
+        type: 2}
+      propertyPath: timeBeforeCanMove
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114095914692236618, guid: a4499e5fef9ada648a60f68931885aa6,
+        type: 2}
+      propertyPath: timeBeforeCanMove
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a4499e5fef9ada648a60f68931885aa6, type: 2}
   m_IsPrefabParent: 0
@@ -487,6 +518,11 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224079301001355106, guid: a4499e5fef9ada648a60f68931885aa6,
     type: 2}
   m_PrefabInternal: {fileID: 1457735910}
+--- !u!1 &1616612052 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1951561609181962, guid: 100870794badc5545b2965c80a23dd21,
+    type: 2}
+  m_PrefabInternal: {fileID: 1867935832}
 --- !u!114 &1810743425 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114155392567938124, guid: 1e50c08eb32b31e48ad9fb354c948ece,
@@ -608,7 +644,7 @@ Prefab:
     - target: {fileID: 114888344555830980, guid: 100870794badc5545b2965c80a23dd21,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ExitToMainMenu
+      value: OpenTitleScreen
       objectReference: {fileID: 0}
     - target: {fileID: 1951561609181962, guid: 100870794badc5545b2965c80a23dd21, type: 2}
       propertyPath: m_IsActive

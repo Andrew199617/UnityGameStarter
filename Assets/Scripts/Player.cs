@@ -60,6 +60,11 @@ public class Player : MonoBehaviour
     private GameObject trailGameObject;
 
     /// <summary>
+    /// We just created a new trail, this is a refrence to the last trail.
+    /// </summary>
+    private GameObject lastTrailGameObject;
+
+    /// <summary>
     /// The RectTransform of the Trail behind the Player.
     /// </summary>
     private RectTransform trailTransform;
@@ -104,19 +109,6 @@ public class Player : MonoBehaviour
 
         if (deltaTime > timeBeforeCanMove)
         {
-            var move = PossesingPlayer == 1
-                ? new Vector3(Input.GetAxis("Horizontal1"), Input.GetAxis("Vertical1"), 0)
-                : new Vector3(Input.GetAxis("Horizontal2"), Input.GetAxis("Vertical2"), 0);
-
-            if ((move.y > 0 || move.y < 0) && (movementDirection.x > 0 || movementDirection.x < 0))
-            {
-                CreateTrail(Quaternion.Euler(0, 0, 90));
-            }
-            else if ((move.x > 0 || move.x < 0) && (movementDirection.y > 0 || movementDirection.y < 0))
-            {
-                CreateTrail(Quaternion.Euler(0, 0, 0));
-            }
-
             SetMovementDirection();
         }
 
@@ -125,19 +117,14 @@ public class Player : MonoBehaviour
 
         transform.position += movementDirection * Time.deltaTime;
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="trailCollider"></param>
-    /// <param name="sizeDelta"></param>
-    /// <returns></returns>
-    private IEnumerator SetColliderSize(BoxCollider2D trailCollider, Vector2 sizeDelta)
+    
+    private IEnumerator SetColliderSize()
     {
-        yield return new WaitForSeconds(timeBeforeCanMove * 3);
-        if (trailCollider)
+        yield return new WaitForSeconds(timeBeforeCanMove);
+        if (lastTrailGameObject)
         {
-            trailCollider.size = sizeDelta;
+            lastTrailGameObject.tag = "Untagged";
+            lastTrailGameObject.layer = 8;
         }
     }
 
@@ -155,12 +142,14 @@ public class Player : MonoBehaviour
         //Only place the collider for the last trail after a grace period
         if (trailBoxCollider)
         {
-            StartCoroutine(SetColliderSize(trailBoxCollider, trailTransform.sizeDelta));
+            lastTrailGameObject = trailGameObject;
+            StartCoroutine(SetColliderSize());
         }
 
         trailGameObject = new GameObject("Trail");
         trailGameObject.SetActive(true);
-        trailGameObject.tag = PossesingPlayer == 1 ? "PlayerOne" : "PlayerTwo";
+        trailGameObject.tag = PossesingPlayer == 1 ? "PlayerOne" : "PlayerTwo"; 
+        trailGameObject.layer = PossesingPlayer == 1 ? LayerMask.NameToLayer("PlayerOne") : LayerMask.NameToLayer("PlayerTwo");
 
         trailTransform = trailGameObject.AddComponent<RectTransform>();
 
@@ -231,7 +220,7 @@ public class Player : MonoBehaviour
 
         trailTransform.anchoredPosition = new Vector2(0,rect.y);
         trailTransform.sizeDelta = new Vector2(Width, rect.height);
-        //trailBoxCollider.size = trailTransform.sizeDelta;
+        trailBoxCollider.size = trailTransform.sizeDelta;
     }
 
     /// <summary>
@@ -243,13 +232,10 @@ public class Player : MonoBehaviour
             ? new Vector3(Input.GetAxis("Horizontal1"), Input.GetAxis("Vertical1"), 0)
             : new Vector3(Input.GetAxis("Horizontal2"), Input.GetAxis("Vertical2"), 0);
 
-        if (move.x > 0 || move.x < 0)
+        if (move.x > 0 || move.x < 0 && (movementDirection.y > 0 || movementDirection.y < 0))
         {
-            //Can't move backwards
-            if (movementDirection.x < 0 && move.x > 0 || movementDirection.x > 0 && move.x < 0)
-            {
-                return;
-            }
+            CreateTrail(Quaternion.Euler(0, 0, 0));
+
             var rectTransform = GetComponent<RectTransform>();
             bool goingLeft = move.x < 0;
             rectTransform.rotation = Quaternion.Euler(0, 0, goingLeft ? (int)Direction.Left : (int)Direction.Right);
@@ -257,13 +243,10 @@ public class Player : MonoBehaviour
             movementDirection = new Vector3(goingLeft ? -Speed : Speed, 0, 0);
             deltaTime = 0;
         }
-        else if (move.y > 0 || move.y < 0)
+        else if (move.y > 0 || move.y < 0 && (movementDirection.x > 0 || movementDirection.x < 0))
         {
-            //Can't move backwards
-            if (movementDirection.y < 0 && move.y > 0 || movementDirection.y > 0 && move.y < 0)
-            {
-                return;
-            }
+            CreateTrail(Quaternion.Euler(0, 0, 90));
+
             var rectTransform = GetComponent<RectTransform>();
             bool goingUp = move.y > 0;
             rectTransform.rotation = Quaternion.Euler(0, 0, goingUp ? (int)Direction.Up : (int)Direction.Down);

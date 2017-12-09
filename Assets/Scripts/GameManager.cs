@@ -110,24 +110,12 @@ public class GameManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Spawns the Walls and LightCycle that are in the GameObject Game.
-    /// Set TimeScale back to 1
-    /// </summary>
-    public void ShowStartScreen()
-    {
-        startScreen.SetActive(true);
-        GameOverScreen.SetActive(false);
-        Game.SetActive(false);
-        Time.timeScale = 0;
-    }
-
-    /// <summary>
     /// Set TimeScale back to 1 and Hide GameOverScreen.
     /// Also reset all players.
     /// </summary>
     public void RetryGame()
     {
-        GameOverScreen.SetActive(false);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Time.timeScale = 1;
     }
 

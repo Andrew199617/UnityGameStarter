@@ -54,12 +54,4 @@ public class ButtonMethods : MonoBehaviour {
         SceneManager.LoadScene("TitleScreen");
     }
 
-    /// <summary>
-    /// The Exit button was pressed. Open Main Menu.
-    /// </summary>
-    public void ExitToMainMenu()
-    {
-        GameManager.GameManagerInst.ShowStartScreen();
-    }
-
 }
