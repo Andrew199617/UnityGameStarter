@@ -79,6 +79,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private const int Width = 9;
 
+    private int currentTrail = 0;
+
     #endregion
 
     #region PublicMethods
@@ -114,17 +116,18 @@ public class Player : MonoBehaviour
 
         IncreaseSpeed(Time.deltaTime);
         SetTrail();
-
+        
         transform.position += movementDirection * Time.deltaTime;
     }
     
     private IEnumerator SetColliderSize()
     {
-        yield return new WaitForSeconds(timeBeforeCanMove);
-        if (lastTrailGameObject)
+        var myLastTrailGameObject = lastTrailGameObject;
+        yield return new WaitForSeconds(timeBeforeCanMove * 2);
+        if (myLastTrailGameObject)
         {
-            lastTrailGameObject.tag = "Untagged";
-            lastTrailGameObject.layer = 8;
+            myLastTrailGameObject.tag = "Untagged";
+            myLastTrailGameObject.layer = 8;
         }
     }
 
@@ -146,7 +149,8 @@ public class Player : MonoBehaviour
             StartCoroutine(SetColliderSize());
         }
 
-        trailGameObject = new GameObject("Trail");
+        trailGameObject = new GameObject("Trail" + currentTrail);
+        currentTrail++;
         trailGameObject.SetActive(true);
         trailGameObject.tag = PossesingPlayer == 1 ? "PlayerOne" : "PlayerTwo"; 
         trailGameObject.layer = PossesingPlayer == 1 ? LayerMask.NameToLayer("PlayerOne") : LayerMask.NameToLayer("PlayerTwo");
@@ -232,7 +236,7 @@ public class Player : MonoBehaviour
             ? new Vector3(Input.GetAxis("Horizontal1"), Input.GetAxis("Vertical1"), 0)
             : new Vector3(Input.GetAxis("Horizontal2"), Input.GetAxis("Vertical2"), 0);
 
-        if (move.x > 0 || move.x < 0 && (movementDirection.y > 0 || movementDirection.y < 0))
+        if ((move.x > 0 || move.x < 0) && (movementDirection.y > 0 || movementDirection.y < 0))
         {
             CreateTrail(Quaternion.Euler(0, 0, 0));
 
@@ -243,7 +247,7 @@ public class Player : MonoBehaviour
             movementDirection = new Vector3(goingLeft ? -Speed : Speed, 0, 0);
             deltaTime = 0;
         }
-        else if (move.y > 0 || move.y < 0 && (movementDirection.x > 0 || movementDirection.x < 0))
+        else if ((move.y > 0 || move.y < 0) && (movementDirection.x > 0 || movementDirection.x < 0))
         {
             CreateTrail(Quaternion.Euler(0, 0, 90));
 
