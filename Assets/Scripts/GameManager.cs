@@ -41,17 +41,17 @@ public class GameManager : MonoBehaviour {
     public void Start()
     {
         GameManagerInst = this;
-        SetPlayersAlive();
+        SetPlayersAlive(true);
     }
 
     /// <summary>
-    /// Set every player to be alive.
+    /// Set every player to be isAlive
     /// </summary>
-    private void SetPlayersAlive()
+    private void SetPlayersAlive(bool isAlive)
     {
         for (var playerIndex = 0; playerIndex < playersAlive.Length; ++playerIndex)
         {
-            playersAlive[playerIndex] = true;
+            playersAlive[playerIndex] = isAlive;
         }
     }
     
