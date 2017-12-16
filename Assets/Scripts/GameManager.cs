@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
@@ -22,6 +23,14 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject startScreen;
 
     /// <summary>
+    /// Refrence to the gameOverText Object in the Unity Scene.
+    /// </summary>
+    public GameObject GameOverText;
+
+
+    private bool[] playersAlive = new bool[2];
+
+    /// <summary>
     /// For using the class as a singleton.
     /// </summary>
     public static GameManager GameManagerInst;
@@ -31,23 +40,61 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void Start()
     {
-        if (!GameManagerInst)
+        GameManagerInst = this;
+        SetPlayersAlive(true);
+    }
+
+    /// <summary>
+    /// Set every player to be isAlive
+    /// </summary>
+    private void SetPlayersAlive(bool isAlive)
+    {
+        for (var playerIndex = 0; playerIndex < playersAlive.Length; ++playerIndex)
         {
-            GameManagerInst = this;
-            DontDestroyOnLoad(this);
+            playersAlive[playerIndex] = isAlive;
         }
-        else
+    }
+    
+    public void PlayerDied(int DeadPlayer)
+    {
+        playersAlive[DeadPlayer] = false;
+
+        int numPlayerAlive = 0;
+        int playerAlive = 0;
+        for (var playerIndex = 0; playerIndex < playersAlive.Length; ++playerIndex)
         {
-            Destroy(this);
+            if (playersAlive[playerIndex])
+            {
+                numPlayerAlive++;
+                playerAlive = playerIndex;
+            }
+        }
+        if (numPlayerAlive == 1)
+        {
+            GameEnded(playerAlive + 1);
         }
     }
 
     /// <summary>
     /// Spawns the Game Over Screen and Stops Time.
     /// </summary>
-    public void GameEnded()
+    public void GameEnded(int WinningPlayer)
     {
         GameOverScreen.SetActive(true);
+
+        //Change text to say what player won
+        var textComponent = GameOverText.GetComponent<Text>();
+        textComponent.text = "Player " + WinningPlayer + " Won!";
+
+        //Change all colors in game over screen to be winning players colors.
+        textComponent.color = WinningPlayer == 1 ? Color.cyan : Color.red;
+        var childImages = GameOverText.transform.parent.GetComponentsInChildren<Image>();
+        foreach (var childImage in childImages)
+        {
+            childImage.color = WinningPlayer == 1 ? Color.cyan : Color.red;
+        }
+
+        //Pause the game so no movement occurs
         Time.timeScale = 0;
     }
 
@@ -63,36 +110,30 @@ public class GameManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Spawns the Walls and LightCycle that are in the GameObject Game.
-    /// Set TimeScale back to 1
-    /// </summary>
-    public void ShowStartScreen()
-    {
-        ResetGameValues();
-        startScreen.SetActive(true);
-        GameOverScreen.SetActive(false);
-        Game.SetActive(false);
-        Time.timeScale = 0;
-    }
-
-    /// <summary>
     /// Set TimeScale back to 1 and Hide GameOverScreen.
     /// Also reset all players.
     /// </summary>
     public void RetryGame()
     {
-        Game.SetActive(true);
-        GameOverScreen.SetActive(false);
-        ResetGameValues();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Time.timeScale = 1;
     }
 
-    /// <summary>
-    /// Resets Player and anything else needed to replay game.
-    /// </summary>
-    private static void ResetGameValues()
+    public void Draw()
     {
-        var players = GameObject.FindGameObjectsWithTag("Player");
-        players.ToList().ForEach(p => p.GetComponent<Player>().Reset());
+        GameOverScreen.SetActive(true);
+        //Change text to say what player won
+        var textComponent = GameOverText.GetComponent<Text>();
+        textComponent.text = "Draw";
+
+        //Change all colors in game over screen to be winning players colors.
+        textComponent.color = Color.green;
+        var childImages = GameOverText.transform.parent.GetComponentsInChildren<Image>();
+        foreach (var childImage in childImages)
+        {
+            childImage.color = Color.green;
+        }
+
+        Time.timeScale = 0;
     }
 }

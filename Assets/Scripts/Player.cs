@@ -63,13 +63,6 @@ public class Player : MonoBehaviour
     /// used to reset postion when restarting the game.
     /// </summary>
     private Vector2 startingOffsetMax;
-
-    /// <summary>
-    /// The GameObject of the Trail behind the Player.
-    /// </summary>
-    private GameObject trailGameObject;
-
-    /// <summary>
     /// The GameObject of the Trail behind the Player.
     /// </summary>
     private GameObject lastTrailGameObject;
@@ -87,7 +80,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// width of the trail.
     /// </summary>
-    private const int Width = 7;
+    private const int Width = 8;
 
     #endregion
 
@@ -103,9 +96,6 @@ public class Player : MonoBehaviour
         movementDirection = new Vector3(0, PossesingPlayer == 1 ? Speed : -Speed, 0);
         transform.rotation = Quaternion.Euler(0, 0, PossesingPlayer == 1 ? (int)Direction.Up : (int)Direction.Down);
         
-        var rectTransform = GetComponent<RectTransform>();
-        startingOffsetMin = rectTransform.offsetMin;
-        startingOffsetMax = rectTransform.offsetMax;
 
         CreateTrail(Quaternion.Euler(0, 0, 0));
     }
@@ -129,15 +119,16 @@ public class Player : MonoBehaviour
             {
                 CreateTrail(Quaternion.Euler(0, 0, 0));
             }
-
+\
             SetMovementDirection(moveInput);
         }
 
         IncreaseSpeed(Time.deltaTime);
         SetTrail();
-
+        
         transform.position += movementDirection * Time.deltaTime;
     }
+    private IEnumerator SetColliderSize(BoxCollider2D trailCollider, Vector2 sizeDelta)
 
     /// <summary>
     /// Allows the player to collide with his own trails again.
@@ -145,11 +136,12 @@ public class Player : MonoBehaviour
     /// <returns>Couroutine</returns>
     private IEnumerator SetTagAndLayer()
     {
-        yield return new WaitForSeconds(timeBeforeCanMove - .1f);
-        if (lastTrailGameObject != null)
+        var myLastTrailGameObject = lastTrailGameObject;
+        yield return new WaitForSeconds(timeBeforeCanMove * 2);
+        if (myLastTrailGameObject)
         {
-            lastTrailGameObject.tag = "Untagged";
-            lastTrailGameObject.layer = 8;
+            myLastTrailGameObject.tag = "Untagged";
+            myLastTrailGameObject.layer = 8;
         }
     }
 
@@ -174,7 +166,7 @@ public class Player : MonoBehaviour
         trailGameObject = new GameObject("Trail");
         trailGameObject.SetActive(true);
         trailGameObject.tag = PossesingPlayer == 1 ? "PlayerOne" : "PlayerTwo";
-        trailGameObject.layer = PossesingPlayer == 1 ? 9 : 10;
+        trailGameObject.layer = PossesingPlayer == 1 ? LayerMask.NameToLayer("PlayerOne") : LayerMask.NameToLayer("PlayerTwo");
 
         trailTransform = trailGameObject.AddComponent<RectTransform>();
 
@@ -191,9 +183,9 @@ public class Player : MonoBehaviour
         trailBoxCollider = trailGameObject.AddComponent<BoxCollider2D>();
         trailBoxCollider.size = new Vector2(Width, height);
 
-        var rigidbody2D = trailGameObject.AddComponent<Rigidbody2D>();
-        rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
-        rigidbody2D.useFullKinematicContacts = true;
+        var rigidbody2DComponent = trailGameObject.AddComponent<Rigidbody2D>();
+        rigidbody2DComponent.bodyType = RigidbodyType2D.Kinematic;
+        rigidbody2DComponent.useFullKinematicContacts = true;
 
         trailTransform.rotation = rotation;
     }
@@ -215,9 +207,13 @@ public class Player : MonoBehaviour
     /// <param name="other">other object you collided with.</param>
     public void OnCollisionEnter2D(Collision2D other)
     {
-        if (!other.gameObject.CompareTag(PossesingPlayer == 1 ? "PlayerOne" : "PlayerTwo"))
+        if (other.transform.CompareTag("Player"))
         {
-            GameManager.GameManagerInst.GameEnded();
+            GameManager.GameManagerInst.Draw();
+        }
+        else
+        {
+            OnDied();
         }
     }
 
@@ -226,7 +222,7 @@ public class Player : MonoBehaviour
     #region PrivateMethods
 
     /// <summary>
-    /// Return player to starting locationa and reset stats if applicable
+    /// Return player to starting location and reset stats if applicable
     /// </summary>
     public void Reset()
     {
@@ -276,13 +272,11 @@ public class Player : MonoBehaviour
     /// <param name="moveInput">The movement in the horizontal and vertical direction</param>
     private void SetMovementDirection(Vector3 moveInput)
     {
-        if (moveInput.x > 0 || moveInput.x < 0)
+        if (moveInput.x > 0 || moveInput.x < 0 && (movementDirection.y > 0 || movementDirection.y < 0))
         {
-            //Can't move backwards
-            if (movementDirection.x < 0 && moveInput.x > 0 || movementDirection.x > 0 && moveInput.x < 0)
-            {
-                return;
-            }
+
+
+
             var rectTransform = GetComponent<RectTransform>();
             bool goingLeft = moveInput.x < 0;
             rectTransform.rotation = Quaternion.Euler(0, 0, goingLeft ? (int)Direction.Left : (int)Direction.Right);
@@ -292,11 +286,8 @@ public class Player : MonoBehaviour
         }
         else if (moveInput.y > 0 || moveInput.y < 0)
         {
-            //Can't move backwards
-            if (movementDirection.y < 0 && moveInput.y > 0 || movementDirection.y > 0 && moveInput.y < 0)
-            {
-                return;
-            }
+            CreateTrail(Quaternion.Euler(0, 0, 90));
+
             var rectTransform = GetComponent<RectTransform>();
             bool goingUp = moveInput.y > 0;
             rectTransform.rotation = Quaternion.Euler(0, 0, goingUp ? (int)Direction.Up : (int)Direction.Down);
@@ -304,6 +295,14 @@ public class Player : MonoBehaviour
             movementDirection = new Vector3(0, goingUp ? Speed : -Speed, 0);
             deltaTime = 0;
         }
+    }
+
+    /// <summary>
+    /// Calls the GameManager PlayerDied().
+    /// </summary>
+    private void OnDied()
+    {
+        GameManager.GameManagerInst.PlayerDied(PossesingPlayer - 1);
     }
 
     #endregion
