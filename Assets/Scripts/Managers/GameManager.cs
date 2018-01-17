@@ -24,7 +24,7 @@ namespace Managers
         /// <summary>
         /// Initialize as a Singleton.
         /// </summary>
-        public void Start()
+        public void Awake()
         {
             if (GameManagerInst)
             {
@@ -130,7 +130,7 @@ namespace Managers
         public void ShowStartScreen()
         {
             SceneManager.SceneManagerInst.ShowStartScreen();
-
+            
             ResetPlayers();
             StartCoroutine(AudioManager.audioManager.PlayRandomMenuMusic());
 

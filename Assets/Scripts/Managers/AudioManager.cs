@@ -212,11 +212,6 @@ namespace Managers
                 audioManager = this;
                 DontDestroyOnLoad(gameObject);
             }
-
-        }
-
-        public void Start()
-        {
             GetChildrenAudioSources();
         }
 

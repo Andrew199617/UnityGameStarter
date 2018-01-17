@@ -41,21 +41,20 @@ namespace Managers
         public static SceneManager SceneManagerInst;
 
         /// <summary>
-        /// Refrence to the gameOverText Object in the Unity Scene.
-        /// </summary>
-        private GameObject gameOverText;
-
-        /// <summary>
         /// Initialize as a Singleton.
         /// </summary>
-        public void Start()
+        public void Awake()
         {
             if (SceneManagerInst)
             {
                 Destroy(SceneManagerInst);
             }
-            gameOverText = gameOverScreen.transform.Find("GameOverText").gameObject;
             SceneManagerInst = this;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded +=
+                (scene, mode) =>
+                {
+                    GameManager.GameManagerInst.ShowStartScreen();
+                };
         }
         
         /// <summary>
@@ -64,7 +63,20 @@ namespace Managers
         public void ShowGameOverScreen()
         {
             HideScreens();
-            gameOverScreen.SetActive(true);
+            SetActiveScene(gameOverScreen);
+        }
+
+        private void SetActiveScene(GameObject screen)
+        {
+            screen.SetActive(true);
+            if (Screen.orientation == ScreenOrientation.Landscape || Screen.width > Screen.height)
+            {
+                screen.transform.Find("Landscape").gameObject.SetActive(true);
+            }
+            else
+            {
+                screen.transform.Find("Portrait").gameObject.SetActive(true);
+            }
         }
 
         /// <summary>
@@ -73,6 +85,7 @@ namespace Managers
         public void ShowGame()
         {
             HideScreens();
+            Screen.orientation = ScreenOrientation.Landscape;
             game.SetActive(true);
         }
 
@@ -82,7 +95,8 @@ namespace Managers
         public void ShowStartScreen()
         {
             HideScreens();
-            startScreen.SetActive(true);
+            Screen.orientation = ScreenOrientation.AutoRotation;
+            SetActiveScene(startScreen);
         }
 
         /// <summary>
@@ -91,7 +105,7 @@ namespace Managers
         public void ShowHowToPlayScreen()
         {
             HideScreens();
-            howToPlayScreen.SetActive(true);
+            SetActiveScene(howToPlayScreen);
         }
 
         /// <summary>
@@ -105,7 +119,7 @@ namespace Managers
             if (screen)
             {
                 HideScreens();
-                screen.SetActive(true);
+                SetActiveScene(screen);
             }
             else
             {

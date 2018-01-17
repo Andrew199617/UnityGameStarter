@@ -8,177 +8,174 @@ using UnityEngine.UI;
 public class Options : MonoBehaviour
 {
 
-    private Image _sfxOnBtn;
-    private Image _musicOnBtn;
-    private Image _sfxOffBtn;
-    private Image _musicOffBtn;
+    private Image sfxOnBtn;
+    private Image musicOnBtn;
+    private Image sfxOffBtn;
+    private Image musicOffBtn;
 
-    private Slider _sfxSlider;
-    private Slider _musicSlider;
+    private Slider sfxSlider;
+    private Slider musicSlider;
 
-    public static int _sfxOn = 1;
-    public static int _musicOn = 1;
+    public static int SfxOn = 1;
+    public static int MusicOn = 1;
 
-    public static float _sfxVolume = 0.0f;
-    public static float _musicVolume = 0.0f;
+    public static float SfxVolume = 0.0f;
+    public static float MusicVolume = 0.0f;
 
-    private const float LOWEST_VOLUME = -39.0f;
-    public const int TRUE = 1;
-    public const int FALSE = 0;
+    private const float LowestVolume = -39.0f;
+    public const int True = 1;
+    public const int False = 0;
 
     [SerializeField]
-    private AudioMixer _masterMixer;
-    [SerializeField]
-    private bool _inOptionMenu = true;
+    private AudioMixer masterMixer;
 
     public void Start()
     {
-        if (!_inOptionMenu) return;
-        _sfxOnBtn = GameObject.Find("OnBtnSE").GetComponent<Image>();
-        _sfxOffBtn = GameObject.Find("OffBtnSE").GetComponent<Image>();
+        sfxOnBtn = GameObject.Find("OnBtnSE").GetComponent<Image>();
+        sfxOffBtn = GameObject.Find("OffBtnSE").GetComponent<Image>();
 
-        _musicOnBtn = GameObject.Find("OnBtnM").GetComponent<Image>();
-        _musicOffBtn = GameObject.Find("OffBtnM").GetComponent<Image>();
+        musicOnBtn = GameObject.Find("OnBtnM").GetComponent<Image>();
+        musicOffBtn = GameObject.Find("OffBtnM").GetComponent<Image>();
 
-        _sfxSlider = GameObject.Find("SfxSlider").GetComponent<Slider>();
-        _musicSlider = GameObject.Find("MusicSlider").GetComponent<Slider>();
+        sfxSlider = GameObject.Find("SfxSlider").GetComponent<Slider>();
+        musicSlider = GameObject.Find("MusicSlider").GetComponent<Slider>();
 
-        _sfxSlider.value = _sfxVolume;
-        _musicSlider.value = _musicVolume;
+        sfxSlider.value = SfxVolume;
+        musicSlider.value = MusicVolume;
 
-        if (_sfxOn != TRUE)
+        if (SfxOn != True)
         {
-            Color temp = _sfxOnBtn.color;
-            _sfxOnBtn.color = _sfxOffBtn.color;
-            _sfxOffBtn.color = temp;
+            Color temp = sfxOnBtn.color;
+            sfxOnBtn.color = sfxOffBtn.color;
+            sfxOffBtn.color = temp;
         }
 
 
-        if (_musicOn != TRUE)
+        if (MusicOn != True)
         {
-            Color temp = _musicOnBtn.color;
-            _musicOnBtn.color = _musicOffBtn.color;
-            _musicOffBtn.color = temp;
+            Color temp = musicOnBtn.color;
+            musicOnBtn.color = musicOffBtn.color;
+            musicOffBtn.color = temp;
         }
 
     }
 
     public static void LoadOptions()
     {
-        _sfxVolume = PlayerPrefs.GetFloat("_sfxVolume");
-        _musicVolume = PlayerPrefs.GetFloat("_musicVolume");
-        _musicOn = PlayerPrefs.GetInt("_musicOn");
-        _sfxOn = PlayerPrefs.GetInt("_sfxOn");
+        SfxVolume = PlayerPrefs.GetFloat("_sfxVolume");
+        MusicVolume = PlayerPrefs.GetFloat("_musicVolume");
+        MusicOn = PlayerPrefs.GetInt("_musicOn");
+        SfxOn = PlayerPrefs.GetInt("_sfxOn");
     }
 
     public void ChangeMusic()
     {
-        _musicVolume = _musicSlider.value;
-        if (_musicVolume < LOWEST_VOLUME)
+        MusicVolume = musicSlider.value;
+        if (MusicVolume < LowestVolume)
         {
-            _musicVolume = -80.0f;
+            MusicVolume = -80.0f;
         }
-        if (_musicOn == TRUE)
+        if (MusicOn == True)
         {
-            _masterMixer.SetFloat("MusicVol", _musicVolume);
+            masterMixer.SetFloat("MusicVol", MusicVolume);
         }
-        PlayerPrefs.SetFloat("_musicVolume", _musicVolume);
+        PlayerPrefs.SetFloat("_musicVolume", MusicVolume);
     }
 
     public void ChangeSfx()
     {
-        _sfxVolume = _sfxSlider.value;
-        if (_sfxVolume < LOWEST_VOLUME)
+        SfxVolume = sfxSlider.value;
+        if (SfxVolume < LowestVolume)
         {
-            _sfxVolume = -80.0f;
+            SfxVolume = -80.0f;
         }
-        if (_sfxOn == TRUE)
+        if (SfxOn == True)
         {
-            _masterMixer.SetFloat("SfxVol", _sfxVolume);
+            masterMixer.SetFloat("SfxVol", SfxVolume);
         }
 
-        PlayerPrefs.SetFloat("_sfxVolume", _sfxVolume);
+        PlayerPrefs.SetFloat("_sfxVolume", SfxVolume);
     }
 
     public void ToggleSoundEffects(int on)
     {
-        if (on == _sfxOn)
+        if (on == SfxOn)
             return;
         else
-            _sfxOn = on;
+            SfxOn = on;
 
-        if (_sfxOn == TRUE)
+        if (SfxOn == True)
         {
-            Color temp = _sfxOnBtn.color;
-            _sfxOnBtn.color = _sfxOffBtn.color;
-            _sfxOffBtn.color = temp;
-            _masterMixer.SetFloat("SfxVol", _sfxVolume);
+            Color temp = sfxOnBtn.color;
+            sfxOnBtn.color = sfxOffBtn.color;
+            sfxOffBtn.color = temp;
+            masterMixer.SetFloat("SfxVol", SfxVolume);
         }
         else
         {
-            Color temp = _sfxOnBtn.color;
-            _sfxOnBtn.color = _sfxOffBtn.color;
-            _sfxOffBtn.color = temp;
-            _masterMixer.SetFloat("SfxVol", -80.0f);
+            Color temp = sfxOnBtn.color;
+            sfxOnBtn.color = sfxOffBtn.color;
+            sfxOffBtn.color = temp;
+            masterMixer.SetFloat("SfxVol", -80.0f);
         }
 
-        PlayerPrefs.SetInt("_sfxOn", _sfxOn);
+        PlayerPrefs.SetInt("_sfxOn", SfxOn);
     }
 
     public void ToggleMusic(int on)
     {
-        if (on == _musicOn)
+        if (on == MusicOn)
             return;
         else
-            _musicOn = on;
+            MusicOn = on;
 
-        if (_musicOn == TRUE)
+        if (MusicOn == True)
         {
-            Color temp = _musicOnBtn.color;
-            _musicOnBtn.color = _musicOffBtn.color;
-            _musicOffBtn.color = temp;
-            _masterMixer.SetFloat("MusicVol", _musicVolume);
+            Color temp = musicOnBtn.color;
+            musicOnBtn.color = musicOffBtn.color;
+            musicOffBtn.color = temp;
+            masterMixer.SetFloat("MusicVol", MusicVolume);
         }
         else
         {
-            Color temp = _musicOnBtn.color;
-            _musicOnBtn.color = _musicOffBtn.color;
-            _musicOffBtn.color = temp;
-            _masterMixer.SetFloat("MusicVol", -80.0f);
+            Color temp = musicOnBtn.color;
+            musicOnBtn.color = musicOffBtn.color;
+            musicOffBtn.color = temp;
+            masterMixer.SetFloat("MusicVol", -80.0f);
         }
 
-        PlayerPrefs.SetInt("_musicOn", _musicOn);
+        PlayerPrefs.SetInt("_musicOn", MusicOn);
     }
 
     public void ToggleSoundEffects()
     {
-        if (_sfxOn == TRUE)
+        if (SfxOn == True)
         {
-            _sfxOn = FALSE;
-            _masterMixer.SetFloat("SfxVol", -80.0f);
+            SfxOn = False;
+            masterMixer.SetFloat("SfxVol", -80.0f);
         }
         else
         {
-            _sfxOn = TRUE;
-            _masterMixer.SetFloat("SfxVol", _sfxVolume);
+            SfxOn = True;
+            masterMixer.SetFloat("SfxVol", SfxVolume);
         }
 
-        PlayerPrefs.SetInt("_sfxOn", _sfxOn);
+        PlayerPrefs.SetInt("_sfxOn", SfxOn);
     }
 
     public void ToggleMusic()
     {
-        if (_musicOn == TRUE)
+        if (MusicOn == True)
         {
-            _musicOn = FALSE;
-            _masterMixer.SetFloat("MusicVol", -80.0f);
+            MusicOn = False;
+            masterMixer.SetFloat("MusicVol", -80.0f);
         }
         else
         {
-            _musicOn = TRUE;
-            _masterMixer.SetFloat("MusicVol", _musicVolume);
+            MusicOn = True;
+            masterMixer.SetFloat("MusicVol", MusicVolume);
         }
 
-        PlayerPrefs.SetInt("_musicOn", _musicOn);
+        PlayerPrefs.SetInt("_musicOn", MusicOn);
     }
 }
