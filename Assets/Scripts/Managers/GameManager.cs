@@ -49,22 +49,22 @@ namespace Managers
         /// Player will tell the GameManager when he died.
         /// GameManager will check if all players are dead before Ending the game.
         /// </summary>
-        /// <param name="deadPlayer">The players index or possesingPlayer</param>
+        /// <param name="deadPlayer">The players index</param>
         public void PlayerDied(int deadPlayer)
         {
             playersAlive[deadPlayer] = false;
 
-            int numPlayerAlive = 0;
+            int numPlayersAlive = 0;
             int playerAlive = 0;
             for (var playerIndex = 0; playerIndex < playersAlive.Length; ++playerIndex)
             {
                 if (playersAlive[playerIndex])
                 {
-                    numPlayerAlive++;
+                    numPlayersAlive++;
                     playerAlive = playerIndex;
                 }
             }
-            if (numPlayerAlive == 1)
+            if (numPlayersAlive <= 1)
             {
                 GameEnded(playerAlive + 1);
             }
@@ -78,18 +78,6 @@ namespace Managers
         {
             SceneManager.SceneManagerInst.ShowGameOverScreen();
 
-            ////Change text to say what player won
-            //var textComponent = gameOverText.GetComponent<Text>();
-            //textComponent.text = "Player " + winningPlayer + " Won!";
-
-            ////Change all colors in game over screen to be winning players colors.
-            //textComponent.color = winningPlayer == 1 ? Color.cyan : Color.red;
-            //var childImages = gameOverScreen.GetComponentsInChildren<Image>();
-            //foreach (var childImage in childImages)
-            //{
-            //    childImage.color = winningPlayer == 1 ? Color.cyan : Color.red;
-            //}
-
             //Pause the game so no movement occurs
             Time.timeScale = 0;
         }
@@ -100,7 +88,13 @@ namespace Managers
         /// </summary>
         public void StartGame()
         {
-            RetryGame();
+            SceneManager.SceneManagerInst.ResetGame();
+            SceneManager.SceneManagerInst.ShowGame();
+            SetPlayersAlive(true);
+
+            StartCoroutine(AudioManager.audioManager.PlayRandomBackgroundMusic());
+
+            Time.timeScale = 1;
         }
 
         /// <summary>
@@ -109,17 +103,11 @@ namespace Managers
         /// </summary>
         public void RetryGame()
         {
-            SceneManager.SceneManagerInst.ShowGame();
-
-            ResetPlayers();
-            StartCoroutine(AudioManager.audioManager.PlayRandomBackgroundMusic());
-
-            Time.timeScale = 1;
+            StartGame();
         }
 
         private void ResetPlayers()
         {
-            SetPlayersAlive(true);
             var players = FindObjectsOfType<Player>().ToList();
             players.ForEach(player => player.Reset());
         }

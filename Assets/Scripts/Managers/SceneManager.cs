@@ -16,12 +16,17 @@ namespace Managers
         [SerializeField] private GameObject gameOverScreen;
 
         /// <summary>
-        /// An Empty GameObject that holds the LightCycle, Walls and anything else in the game.
+        /// An GameObject that holds the Walls, floors, player, enemies, and anything else in the game.
         /// </summary>
         [SerializeField] private GameObject game;
 
         /// <summary>
-        /// An Empty GameObject that holds all the UI for the Start Screen.
+        /// An GameObject that holds the Walls, floors, player, enemies, and anything else in the game.
+        /// </summary>
+        [SerializeField] private GameObject gamePrefab;
+
+        /// <summary>
+        /// A GameObject that holds all the UI for the Start Screen.
         /// </summary>
         [SerializeField] private GameObject startScreen;
 
@@ -97,6 +102,17 @@ namespace Managers
             HideScreens();
             Screen.orientation = ScreenOrientation.AutoRotation;
             SetActiveScene(startScreen);
+        }
+
+        /// <summary>
+        /// Reinstantiates the Game GameObject so that the level will restart.
+        /// </summary>
+        public void ResetGame()
+        {
+            var gameTransform = game.transform;
+            Destroy(game);
+            game = Instantiate(gamePrefab, gameTransform.position, gameTransform.rotation,
+                gameTransform.parent);
         }
 
         /// <summary>

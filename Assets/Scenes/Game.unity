@@ -401,6 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameOverScreen: {fileID: 1922395397}
   game: {fileID: 670164437}
+  gamePrefab: {fileID: 1616840041231870, guid: 95605542bdcc27c4ca592ba499e14f63, type: 2}
   startScreen: {fileID: 1753176776}
   howToPlayScreen: {fileID: 474419975}
   settingsScreen: {fileID: 607353220}
@@ -491,7 +492,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &607353220 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1357760229520754, guid: c1274df1a71b7294bb5e89c61c310157,
@@ -708,10 +709,6 @@ Prefab:
         type: 2}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1616840041231870, guid: 95605542bdcc27c4ca592ba499e14f63, type: 2}
-      propertyPath: m_Name
-      value: Game
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 95605542bdcc27c4ca592ba499e14f63, type: 2}
@@ -944,6 +941,10 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: QuitPressed
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340558054873792, guid: f2b66c815bfc2a04a8b4b26aff8b9739, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f2b66c815bfc2a04a8b4b26aff8b9739, type: 2}
@@ -1716,6 +1717,10 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 296775022}
+    - target: {fileID: 1357760229520754, guid: c1274df1a71b7294bb5e89c61c310157, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c1274df1a71b7294bb5e89c61c310157, type: 2}
   m_IsPrefabParent: 0
@@ -2091,7 +2096,17 @@ GameObject:
   m_PrefabParentObject: {fileID: 1340558054873792, guid: f2b66c815bfc2a04a8b4b26aff8b9739,
     type: 2}
   m_PrefabInternal: {fileID: 1020209651}
---- !u!1001 &1922395395
+--- !u!224 &1922395396 stripped
+RectTransform:
+  m_PrefabParentObject: {fileID: 224017189105815640, guid: 100870794badc5545b2965c80a23dd21,
+    type: 2}
+  m_PrefabInternal: {fileID: 1940808815}
+--- !u!1 &1922395397 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1951561609181962, guid: 100870794badc5545b2965c80a23dd21,
+    type: 2}
+  m_PrefabInternal: {fileID: 1940808815}
+--- !u!1001 &1940808815
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -2188,6 +2203,26 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114981155659322440, guid: 100870794badc5545b2965c80a23dd21,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 296775018}
+    - target: {fileID: 114981155659322440, guid: 100870794badc5545b2965c80a23dd21,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RetryGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 114888344555830980, guid: 100870794badc5545b2965c80a23dd21,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 296775018}
+    - target: {fileID: 114888344555830980, guid: 100870794badc5545b2965c80a23dd21,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ShowStartScreen
+      objectReference: {fileID: 0}
     - target: {fileID: 1951561609181962, guid: 100870794badc5545b2965c80a23dd21, type: 2}
       propertyPath: m_IsActive
       value: 0
@@ -2195,16 +2230,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 100870794badc5545b2965c80a23dd21, type: 2}
   m_IsPrefabParent: 0
---- !u!224 &1922395396 stripped
-RectTransform:
-  m_PrefabParentObject: {fileID: 224017189105815640, guid: 100870794badc5545b2965c80a23dd21,
-    type: 2}
-  m_PrefabInternal: {fileID: 1922395395}
---- !u!1 &1922395397 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1951561609181962, guid: 100870794badc5545b2965c80a23dd21,
-    type: 2}
-  m_PrefabInternal: {fileID: 1922395395}
 --- !u!1 &1953783023
 GameObject:
   m_ObjectHideFlags: 0
