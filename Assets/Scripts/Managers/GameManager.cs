@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Pawns;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,12 @@ namespace Managers
     /// Anything that has to do with the game concept.
     /// </summary>
     [RequireComponent(typeof(SceneManager))]
-    public class GameManager : MonoBehaviour {
+    public class GameManager : MonoBehaviour
+    {
+        /// <summary>
+        /// How many times the player has died. Useful for knowing if we should reset the map.
+        /// </summary>
+        private int deaths;
 
         /// <summary>
         /// GameManager keeps track of how many players are in the game.
@@ -77,6 +83,7 @@ namespace Managers
         private void GameEnded(int winningPlayer)
         {
             SceneManager.SceneManagerInst.ShowGameOverScreen();
+            deaths++;
 
             //Pause the game so no movement occurs
             Time.timeScale = 0;
@@ -88,7 +95,10 @@ namespace Managers
         /// </summary>
         public void StartGame()
         {
-            SceneManager.SceneManagerInst.ResetGame();
+            if (deaths > 0)
+            {
+                SceneManager.SceneManagerInst.ResetGame();
+            }
             SceneManager.SceneManagerInst.ShowGame();
             SetPlayersAlive(true);
 

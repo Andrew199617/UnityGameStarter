@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using Pawns;
+using UnityEngine;
 
 namespace Interactables
 {
-    [RequireComponent(typeof(Rigidbody2D))]
+    //[RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
     public class Obstacle : MonoBehaviour {
 

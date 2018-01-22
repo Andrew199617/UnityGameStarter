@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Pawns
 {
-    public class Pawn : MonoBehaviour, ICloneable
+    public class Pawn : MonoBehaviour
     {
         #region Protected Variables
 
@@ -52,7 +52,7 @@ namespace Pawns
 
             if (dmg < 0)
             {
-                Debug.Log("Healed");
+                //AudioManager.audioManager.PlaySoundEffect("Healed");
             }
             else if (dmg > 0)
             {
@@ -99,14 +99,6 @@ namespace Pawns
                 Destroy(gameObject);
             }
         }
-
-        #region Implementation of ICloneable
-
-        public object Clone()
-        {
-            return MemberwiseClone();
-        }
-
-        #endregion
+        
     }
 }

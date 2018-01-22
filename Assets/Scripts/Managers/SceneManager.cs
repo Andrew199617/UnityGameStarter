@@ -16,14 +16,9 @@ namespace Managers
         [SerializeField] private GameObject gameOverScreen;
 
         /// <summary>
-        /// An GameObject that holds the Walls, floors, player, enemies, and anything else in the game.
+        /// An GameObject that holds the player, enemies, and anything else that can change transform.
         /// </summary>
-        [SerializeField] private GameObject game;
-
-        /// <summary>
-        /// An GameObject that holds the Walls, floors, player, enemies, and anything else in the game.
-        /// </summary>
-        [SerializeField] private GameObject gamePrefab;
+        [SerializeField] private GameObject movableObjects;
 
         /// <summary>
         /// A GameObject that holds all the UI for the Start Screen.
@@ -46,6 +41,11 @@ namespace Managers
         public static SceneManager SceneManagerInst;
 
         /// <summary>
+        /// Refrence to UICanvas onject in Unity.
+        /// </summary>
+        private GameObject uiCanvas;
+
+        /// <summary>
         /// Initialize as a Singleton.
         /// </summary>
         public void Awake()
@@ -55,11 +55,16 @@ namespace Managers
                 Destroy(SceneManagerInst);
             }
             SceneManagerInst = this;
+#if !UNITY_EDITOR
             UnityEngine.SceneManagement.SceneManager.sceneLoaded +=
                 (scene, mode) =>
                 {
                     GameManager.GameManagerInst.ShowStartScreen();
                 };
+#else
+            uiCanvas = GameObject.Find("UICanvas");
+            uiCanvas.SetActive(false);
+#endif
         }
         
         /// <summary>
@@ -68,6 +73,7 @@ namespace Managers
         public void ShowGameOverScreen()
         {
             HideScreens();
+            ShowUiCanvas(true);
             SetActiveScene(gameOverScreen);
         }
 
@@ -91,7 +97,20 @@ namespace Managers
         {
             HideScreens();
             Screen.orientation = ScreenOrientation.Landscape;
-            game.SetActive(true);
+            ShowUiCanvas(false);
+        }
+
+        /// <summary>
+        /// Finds the UICanvas in the scene and sets its active status to the bool param.
+        /// </summary>
+        /// <param name="active">Wether to hide or show canvas.</param>
+        private void ShowUiCanvas(bool active)
+        {
+            if (!uiCanvas)
+            {
+                uiCanvas = GameObject.Find("UICanvas");
+            }
+            uiCanvas.gameObject.SetActive(active);
         }
 
         /// <summary>
@@ -109,10 +128,18 @@ namespace Managers
         /// </summary>
         public void ResetGame()
         {
-            var gameTransform = game.transform;
-            Destroy(game);
-            game = Instantiate(gamePrefab, gameTransform.position, gameTransform.rotation,
-                gameTransform.parent);
+            var respawnArea = GameObject.Find("MovableObjects");
+            if (!respawnArea)
+            {
+                respawnArea = GameObject.Find("MovableObjects(Clone)");
+            }
+            var oldParent = respawnArea.transform.parent;
+            Destroy(respawnArea.gameObject);
+            var newRespawnGameObject = Instantiate(movableObjects, oldParent);
+
+            var followCamera = GameObject.Find("FollowCam");
+            var cinemachineVirtualCamera = followCamera.GetComponent<Cinemachine.CinemachineVirtualCamera>();
+            cinemachineVirtualCamera.Follow = newRespawnGameObject.transform.Find("Player");
         }
 
         /// <summary>
@@ -151,7 +178,6 @@ namespace Managers
         {
             gameOverScreen.SetActive(false);
             startScreen.SetActive(false);
-            game.SetActive(false);
             howToPlayScreen.SetActive(false);
             settingsScreen.SetActive(false);
         }
